@@ -11,6 +11,7 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
+dotenvy = "0.15"
 tauri = { version = "1", features = ["shell-open"] }
 chrono = { version = "0.4", features = ["clock"] }
 reqwest = { version = "0.11", features = ["blocking", "json"] }

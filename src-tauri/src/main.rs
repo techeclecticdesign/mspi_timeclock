@@ -4,6 +4,8 @@ use tauri::State;
 use chrono::{Utc};
 use reqwest::blocking::Client;
 use serde_json::Value;
+use std::env;
+use dotenvy::dotenv;
 
 type ResourcePath = String;
 type GristConfig = (String, String, String);
@@ -180,6 +182,7 @@ fn get_message(resource_path: State<'_, ResourcePath>) -> Result<String, String>
 }
 
 fn main() {
+    dotenvy::dotenv().ok();
     let context = tauri::generate_context!();
     let resource_path = if cfg!(debug_assertions) {
         get_dev_resource_dir()
@@ -194,10 +197,11 @@ fn main() {
     .to_string_lossy()
     .to_string();
 
-    let grist_api_key = "062cc961c12bebc74880d88d09398ff8a4cdebd8".to_string();
-    let grist_base_url = "http://172.30.221.95:8484".to_string();
-    let document_id = "qZ1weY6NyWVWY9HErBr2QZ".to_string();
-    let grist_config: GristConfig = (grist_api_key, grist_base_url, document_id);
+    let grist_config: GristConfig = (
+        env::var("GRIST_API_KEY").expect("Missing GRIST_API_KEY"),
+        env::var("GRIST_BASE_URL").expect("Missing GRIST_BASE_URL"),
+        env::var("GRIST_DOCUMENT_ID").expect("Missing GRIST_DOCUMENT_ID"),
+    );
 
     tauri::Builder::default()
         .plugin(tauri_plugin_printer::init())
